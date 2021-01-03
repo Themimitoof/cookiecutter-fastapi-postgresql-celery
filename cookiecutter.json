@@ -1,0 +1,9 @@
+{
+    "project_name": "Base Project",
+    "base_version": "0.0.0",
+    "description": "",
+    "author": "Tech team <tech-team@foo.bar>",
+    "repo_dir": "{{cookiecutter.project_name.replace(' ', '-').replace('_', '-').lower()}}",
+    "package_dir": "{{cookiecutter.repo_dir.replace('-', '_').lower()}}",
+    "package_name": "{{cookiecutter.repo_dir}}"
+}
