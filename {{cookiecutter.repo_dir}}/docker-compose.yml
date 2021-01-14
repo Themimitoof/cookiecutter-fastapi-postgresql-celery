@@ -1,0 +1,27 @@
+version: "3"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: docker/api/Dockerfile
+    # command: poetry run uvicorn {{cookiecutter.package_dir}}.main:app --host 0.0.0.0 --reload
+    restart: on-failure
+    env_file: .env
+    # volumes:
+    #   - ./alembic.ini:/srv/{{cookiecutter.repo_dir}}/alembic.ini
+    #   - ./{{cookiecutter.package_dir}}:/srv/fastapi-dummy-api/{{cookiecutter.package_dir}}
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:13-alpine
+    restart: on-failure
+    env_file: .env
+    volumes:
+      - api_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  api_postgres_data:
