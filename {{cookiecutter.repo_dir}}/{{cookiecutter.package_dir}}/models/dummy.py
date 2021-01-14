@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String
 
-from {{cookiecutter.package_dir}}.db import Base
+from {{cookiecutter.package_dir}}.models import Base
 
 
 class Dummy(Base):

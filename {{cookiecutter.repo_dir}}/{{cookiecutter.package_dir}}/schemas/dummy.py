@@ -5,14 +5,15 @@ from pydantic import BaseModel
 
 # Shared properties
 class DummyBaseSchema(BaseModel):
-    title: Optional[str] = None
-    description: Optional[str] = None
+    title: Optional[str]
+    description: Optional[str]
 
 
 # Properties shared by models stored in DB
 class DummyInDBBaseSchema(DummyBaseSchema):
     id: int
     title: str
+    description: Optional[str]
 
     class Config:
         orm_mode = True
@@ -26,6 +27,7 @@ class DummyInDBSchema(DummyInDBBaseSchema):
 # Properties to receive on dummy creation
 class DummyCreateSchema(DummyBaseSchema):
     title: str
+    description: Optional[str]
 
 
 # Properties to receive on dummy update

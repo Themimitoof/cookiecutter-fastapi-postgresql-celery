@@ -20,7 +20,7 @@ fileConfig(config.config_file_name)
 # target_metadata = mymodel.Base.metadata
 # target_metadata = None
 
-from {{cookiecutter.package_dir}}.db import Base  # noqa
+from {{cookiecutter.package_dir}}.models import Base  # noqa
 
 target_metadata = Base.metadata
 

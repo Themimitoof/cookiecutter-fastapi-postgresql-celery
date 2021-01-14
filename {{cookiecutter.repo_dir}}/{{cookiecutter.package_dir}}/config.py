@@ -4,14 +4,19 @@ from typing import Any, Dict, List, Optional, Union
 from pydantic import AnyHttpUrl, BaseSettings, PostgresDsn, validator
 
 
-class AppSettingsMixin:
+class Settings(BaseSettings):
+    """
+    Configuration model for {{cookiecutter.package_dir}}.
+    """
+
+    # -- App settings section
     PROJECT_NAME: str
     SECRET_KEY: str = secrets.token_urlsafe(32)
     ACCESS_TOKEN_EXPIRE_MINUTES: int = (
         60 * 24 * 8
     )  # 60 minutes * 24 hours * 8 days = 8 days
-    SERVER_NAME: str
-    SERVER_HOST: AnyHttpUrl
+    # SERVER_NAME: str
+    # SERVER_HOST: AnyHttpUrl
 
     # BACKEND_CORS_ORIGINS is a JSON-formatted list of origins
     # e.g: '["http://localhost", "http://localhost:4200", "http://localhost:3000", \
@@ -26,8 +31,8 @@ class AppSettingsMixin:
             return v
         raise ValueError(v)
 
+    # -- Database settings section
 
-class PostgreSQLSettingsMixin:
     POSTGRES_SERVER: str
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
@@ -38,23 +43,18 @@ class PostgreSQLSettingsMixin:
     def assemble_db_connection(cls, v: Optional[str], values: Dict[str, Any]) -> Any:
         if isinstance(v, str):
             return v
+
         return PostgresDsn.build(
             scheme="postgresql",
             user=values.get("POSTGRES_USER"),
             password=values.get("POSTGRES_PASSWORD"),
             host=values.get("POSTGRES_SERVER"),
-            path=f"/{values.get('POSTGRES_DB') or ''}",
+            path=f"/{values.get('POSTGRES_DB')}",
         )
 
+        # -- Celery settings section
 
-class CelerySettingsMixin:
-    CELERY_BROKER_DSN: str
-
-
-class Settings(AppSettingsMixin, PostgreSQLSettingsMixin, BaseSettings):
-    """
-    Configuration model for {{cookiecutter.package_dir}}.
-    """
+        CELERY_BROKER_DSN: str
 
     class Config:
         case_sensitive = True
