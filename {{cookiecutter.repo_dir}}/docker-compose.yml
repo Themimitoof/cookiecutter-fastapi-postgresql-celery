@@ -10,11 +10,26 @@ services:
     env_file: .env
     # volumes:
     #   - ./alembic.ini:/srv/{{cookiecutter.repo_dir}}/alembic.ini
-    #   - ./{{cookiecutter.package_dir}}:/srv/fastapi-dummy-api/{{cookiecutter.package_dir}}
+    #   - ./{{cookiecutter.package_dir}}:/srv/{{cookiecutter.repo_dir}}/{{cookiecutter.package_dir}}
     ports:
       - "127.0.0.1:8000:8000"
     depends_on:
       - postgres
+      - rabbitmq
+
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend/Dockerfile
+    restart: on-failure
+    scale: 2
+    env_file: .env
+    # volumes:
+    #   - ./alembic.ini:/srv/{{cookiecutter.repo_dir}}/alembic.ini
+    #   - ./{{cookiecutter.package_dir}}:/srv/{{cookiecutter.repo_dir}}/{{cookiecutter.package_dir}}
+    depends_on:
+      - postgres
+      - rabbitmq
 
   postgres:
     image: postgres:13-alpine
@@ -22,6 +37,10 @@ services:
     env_file: .env
     volumes:
       - api_postgres_data:/var/lib/postgresql/data
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    restart: on-failure
 
 volumes:
   api_postgres_data:

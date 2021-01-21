@@ -3,9 +3,11 @@ from typing import Any, Dict, List
 from fastapi import APIRouter, HTTPException
 
 from {{cookiecutter.package_dir}} import models
+from {{cookiecutter.package_dir}}.backend.tasks.dummy import dummy_created
 from {{cookiecutter.package_dir}}.models import DBSession
 from {{cookiecutter.package_dir}}.schemas.dummy import (
     DummyCreateSchema,
+    DummyInDBBaseSchema,
     DummyReturnSchema,
     DummyUpdateSchema,
 )
@@ -46,6 +48,8 @@ def create_dummy(*, dummy: DummyCreateSchema) -> Any:
     """
 
     dummy = models.Dummy.create(dummy)
+
+    dummy_created.delay(DummyInDBBaseSchema.from_orm(dummy).dict())
 
     return dummy
 

@@ -2,12 +2,12 @@ FROM python:3.7-slim
 
 RUN pip install --no-cache-dir poetry
 
-WORKDIR /srv/fastapi-dummy-api
-COPY pyproject.toml poetry.lock alembic.ini /srv/fastapi-dummy-api/
-COPY fastapi_dummy_api/ /srv/fastapi-dummy-api/fastapi_dummy_api
+WORKDIR /srv/{{cookiecutter.repo_dir}}
+COPY pyproject.toml poetry.lock alembic.ini /srv/{{cookiecutter.repo_dir}}/
+COPY {{cookiecutter.package_dir}}/ /srv/{{cookiecutter.repo_dir}}/{{cookiecutter.package_dir}}
 
-RUN poetry install
+RUN poetry install --no-dev
 
 EXPOSE 8000
 
-CMD poetry run uvicorn fastapi_dummy_api.main:app --host 0.0.0.0
+CMD poetry run uvicorn {{cookiecutter.package_dir}}.main:app --host 0.0.0.0

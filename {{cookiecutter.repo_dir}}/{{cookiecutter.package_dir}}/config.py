@@ -1,7 +1,7 @@
 import secrets
 from typing import Any, Dict, List, Optional, Union
 
-from pydantic import AnyHttpUrl, BaseSettings, PostgresDsn, validator
+from pydantic import AnyHttpUrl, AnyUrl, BaseSettings, PostgresDsn, validator
 
 
 class Settings(BaseSettings):
@@ -52,9 +52,26 @@ class Settings(BaseSettings):
             path=f"/{values.get('POSTGRES_DB')}",
         )
 
-        # -- Celery settings section
+    # -- Celery settings section
 
-        CELERY_BROKER_DSN: str
+    CELERY_SERVER: str
+    CELERY_USER: str
+    CELERY_PASSWORD: Optional[str]
+    CELERY_VHOST: str
+    CELERY_BROKER_DSN: Optional[AnyUrl] = None
+
+    @validator("CELERY_BROKER_DSN", pre=True)
+    def assemble_celery_dsn(cls, v: Optional[str], values: Dict[str, Any]) -> Any:
+        if isinstance(v, str):
+            return v
+
+        return AnyUrl.build(
+            scheme="amqp",
+            user=values.get("CELERY_USER"),
+            password=values.get("CELERY_PASSWORD"),
+            host=values.get("CELERY_SERVER"),
+            path=f"/{values.get('CELERY_VHOST')}",
+        )
 
     class Config:
         case_sensitive = True
